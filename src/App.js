@@ -31,6 +31,7 @@ class App extends Component {
   state = {
     users: [],
     user: {},
+    repos:[],
     loading: false,
     alert: null
   }
@@ -48,7 +49,6 @@ class App extends Component {
     client-id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&
     client-secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`);
 
-    console.log(res)
     
     this.setState({ users: res.data.items, loading: false});
   }
@@ -57,7 +57,6 @@ class App extends Component {
   getUser = async (username) => {
     this.setState({ loading: true });
 
-    console.log('getUser:' + username);
     const res = await axios.get(`https://api.github.com/users/${username}?
     client-id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&
     client-secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`);
@@ -65,6 +64,16 @@ class App extends Component {
     this.setState({ user: res.data, loading: false });
   }
 
+  // Get users repos
+  getUserRepos = async (username) => {
+    this.setState({ loading: true });
+
+    const res = await axios.get(`https://api.github.com/users/${username}/repos?per_page=5&sort=created:asc&
+    client-id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&
+    client-secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`);
+
+    this.setState({ repos: res.data, loading: false });
+  }
   // Clear search users results
   clearUsers = () => {
     this.setState({ users: [], loading: false});
@@ -76,7 +85,7 @@ class App extends Component {
   }
 
   render() {
-    const { users, user, loading } = this.state;
+    const { users, user, loading, repos } = this.state;
 
     return (
       <Router>
@@ -85,8 +94,15 @@ class App extends Component {
           <div className="container">
             <Alert alert={this.state.alert} />
 
+            {/* Will show only one rout at a time */}
             <Switch>
 
+              {/* Rout should have render function / component. 
+              If we use a render function in order to render several components
+              and not just one, than we can wrap them all in a Fragment
+              component. A reminder, render function should have only one
+              parent element.
+              */}
               {/* Home page */}
               <Route exact path='/' render={props => (
                 <Fragment>
@@ -104,7 +120,12 @@ class App extends Component {
 
               {/* User page */}
               <Route exact path='/user/:login' render={ props=> (
-                <User { ...props } getUser={this.getUser} user={user} loading={loading}/>
+                <User { ...props } 
+                getUser={this.getUser} 
+                getUserRepos={this.getUserRepos} 
+                user={user} 
+                repos={repos} 
+                loading={loading}/>
               )} />
 
             </Switch>
