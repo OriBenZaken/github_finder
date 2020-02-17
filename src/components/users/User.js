@@ -7,7 +7,7 @@ import { Repos } from '../repos/Repos';
 const User = ({ user, loading, repos, getUser, getUserRepos, match }) => {
     // useEffect will run all the time unsless we will give it some limitations
     // in array as the 2nd argument.
-    // for exmaple, we can make it work only repos has changesd, and pass [repos].
+    // for exmaple, we can make it work only repos has changed, and pass [repos].
     // In order to make it run only once and mimic ComponentDidMount() we
     // should pass an empty array ([])
     useEffect(() => {
