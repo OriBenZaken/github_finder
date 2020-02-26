@@ -1,18 +1,22 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { Fragment, useEffect, useContext } from 'react';
 import Spinner from '../layouts/Spinner';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Repos } from '../repos/Repos';
+import GithubContext from '../../context/github/githubContext'
 
-const User = ({ user, loading, repos, getUser, getUserRepos, match }) => {
+
+const User = ({ match }) => {
+    const githubContext = useContext(GithubContext);
+
     // useEffect will run all the time unsless we will give it some limitations
     // in array as the 2nd argument.
     // for exmaple, we can make it work only repos has changed, and pass [repos].
     // In order to make it run only once and mimic ComponentDidMount() we
     // should pass an empty array ([])
     useEffect(() => {
-        getUser(match.params.login);
-        getUserRepos(match.params.login);
+        githubContext.getUser(match.params.login);
+        githubContext.getUserRepos(match.params.login);
         //eslint-disable-next-line
     }, []);
 
@@ -30,9 +34,9 @@ const User = ({ user, loading, repos, getUser, getUserRepos, match }) => {
         public_repos,
         public_gists,
         hireable
-    } = user;
+    } = githubContext.user;
 
-    if (loading) return <Spinner />;
+    if (githubContext.loading) return <Spinner />;
     return (
         <Fragment>
             <Link to='/' className='btn btn-light'>Back To Search</Link>
@@ -87,16 +91,13 @@ const User = ({ user, loading, repos, getUser, getUserRepos, match }) => {
                 <div className="badge badge-dark">Public Gists: {public_gists}</div>
             </div>
             
-            <Repos repos={repos} />
+            <Repos/>
         </Fragment>
     )
 }
 
 User.propTypes = {
-    loading: PropTypes.bool.isRequired,
-    user: PropTypes.object.isRequired,
     repos: PropTypes.array.isRequired,
-    getUser: PropTypes.func.isRequired,
     getUserRepos: PropTypes.func.isRequired
 };
 

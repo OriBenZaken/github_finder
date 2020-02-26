@@ -7,9 +7,6 @@ import Search from './components/users/Search';
 import Alert from './components/layouts/Alert';
 import About from './components/pages/About';
 import axios from 'axios';
-
-import GithubContext from './context/github/GithubState';
-
 import './App.css';
 import GithubState from './context/github/GithubState';
 
@@ -32,62 +29,21 @@ the <React.Fragment> element. This element will disapper when it will go to the 
 */
 
 const App = () => {
-  const [users, setUsers] = useState([]);
   const [user, setUser] = useState({});
   const [repos, setRepos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState(null);
 
-  useEffect(() => {
-    async function fetchData() {
-      setLoading(true);
-      const res = await axios.get(`https://api.github.com/users?client-id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&client-secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`);
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     setLoading(true);
+  //     const res = await axios.get(`https://api.github.com/users?client-id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&client-secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`);
       
-      setUsers(res.data);
-      setLoading(false);
-    } 
-    fetchData();
-  }, []); 
-
-  // Search github users
-  const searchUsers = async text => {
-    setLoading(true);
-    const res = await axios.get(`https://api.github.com/search/users?q=${text}&
-    client-id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&
-    client-secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`);
-
-    setUsers(res.data.items);
-    setLoading(false);
-  }
-
-  // Get a single Github user
-  const getUser = async (username) => {
-    setLoading(true);
-
-    const res = await axios.get(`https://api.github.com/users/${username}?
-    client-id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&
-    client-secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`);
-
-    setUser(res.data);
-    setLoading(false);
-  }
-
-  // Get users repos
-  const getUserRepos = async (username) => {
-    setLoading(true);
-
-    const res = await axios.get(`https://api.github.com/users/${username}/repos?per_page=5&sort=created:asc&
-    client-id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&
-    client-secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`);
-
-    setRepos(res.data);
-    setLoading(false);
-  }
-  // Clear search users results
-  const clearUsers = () => {
-    setUsers([]);
-    setLoading(false);
-  }
+  //     setUsers(res.data);
+  //     setLoading(false);
+  //   } 
+  //   fetchData();
+  // }, []); 
 
   const showAlert = (msg, type) => {
     setAlert({ msg, type });
@@ -114,12 +70,9 @@ const App = () => {
               {/* Home page */}
               <Route exact path='/' render={props => (
                 <Fragment>
-                  <Search 
-                  searchUsers={searchUsers} 
-                  clearUsers={clearUsers} 
-                  showClear={users.length > 0 ? true : false} 
+                  <Search  
                   setAlert={showAlert}/>
-                <Users loading={loading} users={users}/>
+                <Users/>
                 </Fragment>
               )} />
 
@@ -128,12 +81,7 @@ const App = () => {
 
               {/* User page */}
               <Route exact path='/user/:login' render={ props=> (
-                <User { ...props } 
-                getUser={getUser} 
-                getUserRepos={getUserRepos} 
-                user={user} 
-                repos={repos} 
-                loading={loading}/>
+                <User { ...props } />
               )} />
 
             </Switch>
