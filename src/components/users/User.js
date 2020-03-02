@@ -1,6 +1,5 @@
 import React, { Fragment, useEffect, useContext } from 'react';
 import Spinner from '../layouts/Spinner';
-import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Repos } from '../repos/Repos';
 import GithubContext from '../../context/github/githubContext'
@@ -95,10 +94,5 @@ const User = ({ match }) => {
         </Fragment>
     )
 }
-
-User.propTypes = {
-    repos: PropTypes.array.isRequired,
-    getUserRepos: PropTypes.func.isRequired
-};
 
 export default User;

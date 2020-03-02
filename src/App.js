@@ -1,14 +1,15 @@
-import React, { useState, useEffect, Fragment } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import Navbar from './components/layouts/Navbar';
-import Users from './components/users/Users';
 import User from './components/users/User';
-import Search from './components/users/Search';
+import Home from './components/pages/Home';
 import Alert from './components/layouts/Alert';
 import About from './components/pages/About';
-import axios from 'axios';
+import NotFound from './components/pages/NotFound';
 import './App.css';
 import GithubState from './context/github/GithubState';
+import AlertState from './context/alert/AlertState';
+
 
 /*
 What is JSX?
@@ -29,71 +30,44 @@ the <React.Fragment> element. This element will disapper when it will go to the 
 */
 
 const App = () => {
-  const [user, setUser] = useState({});
-  const [repos, setRepos] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [alert, setAlert] = useState(null);
-
-  // useEffect(() => {
-  //   async function fetchData() {
-  //     setLoading(true);
-  //     const res = await axios.get(`https://api.github.com/users?client-id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&client-secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`);
-      
-  //     setUsers(res.data);
-  //     setLoading(false);
-  //   } 
-  //   fetchData();
-  // }, []); 
-
-  const showAlert = (msg, type) => {
-    setAlert({ msg, type });
-    setTimeout(() => setAlert(null), 5000);
-  }
-
   return (
-    <GithubState>
-      <Router>
-        <div className="App">
-          <Navbar />
-          <div className="container">
-            <Alert alert={alert} />
+    <AlertState>
+      <GithubState>
+        <Router>
+          <div className="App">
+            <Navbar />
+            <div className="container">
+              <Alert/>
 
-            {/* Will show only one rout at a time */}
-            <Switch>
+              {/* Will show only one rout at a time */}
+              <Switch>
 
-              {/* Rout should have render function / component. 
-              If we use a render function in order to render several components
-              and not just one, than we can wrap them all in a Fragment
-              component. A reminder, render function should have only one
-              parent element.
-              */}
-              {/* Home page */}
-              <Route exact path='/' render={props => (
-                <Fragment>
-                  <Search  
-                  setAlert={showAlert}/>
-                <Users/>
-                </Fragment>
-              )} />
+                {/* Rout should have render function / component. 
+                If we use a render function in order to render several components
+                and not just one, than we can wrap them all in a Fragment
+                component. A reminder, render function should have only one
+                parent element.
+                */}
+                {/* Home page */}
+                <Route exact path='/' component={Home} />
 
-              {/* About page */}
-              <Route exact path='/about' component={About} />
+                {/* About page */}
+                <Route exact path='/about' component={About} />
 
-              {/* User page */}
-              <Route exact path='/user/:login' render={ props=> (
-                <User { ...props } />
-              )} />
+                {/* User page */}
+                <Route exact path='/user/:login' component={User} />
 
-            </Switch>
-            
+                {/* Not Found: important to be at the END of the Router */}
+                <Route component={NotFound}/>
+              </Switch>
+              
+            </div>
+
           </div>
-
-        </div>
-      </Router>
-    </GithubState>
+        </Router>
+      </GithubState>
+    </AlertState>
   );
-  
-
 }
 
 export default App;
